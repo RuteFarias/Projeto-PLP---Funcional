@@ -1,84 +1,90 @@
-main :: IO ()
-main = do
+-- Animal (Id, Tamanho, Genero, Cor, Tipo, Dono, Obs) 
+data Animal = Animal Int String String String String String String
 
--- definição dos tipos dos dados
+idAnimal :: Animal -> Int
+idAnimal (Animal id _ _ _ _ _ _) = id
 
-type Id = Int
-type Tamanho = String
-type Genero = String
-type Cor = String
-type Tipo = String
-type Dono = String
-type Obs = String
-data Animal = Id Tamanho Genero Cor Tipo Dono Obs
-type Animais = [Animal]
-					deriving (Show, Read)
+setTamanho (Animal id tam gen cor tipo dono obs) otherTam = Animal id otherTam gen cor tipo dono obs
+setObs (Animal id tam gen cor tipo dono obs) otherObs = Animal id tam gen cor tipo dono otherObs
 
+toString (Animal id tam gen cor tipo dono obs) = "Animal(" ++ "Id: " ++ show id ++ ", Tamanho: " ++ tam ++ ", Genero: " ++ gen ++ ", Cor: " ++ cor ++ ", Tipo: " ++ tipo ++ ", Dono: " ++ dono ++ ", Obs: " ++ obs ++ ")"
 
--- função que recebe uma String e retorna uma IO String
-getString :: String -> IO String
-getString str = do
-			putStr str
-			res <- getLine
-			return res
+existeAnimal :: [Animal] -> Int -> Bool
+existeAnimal [] _ = False
+existeAnimal animais id
+	| (idAnimal (head animais) == id) = True
+	| otherwise = existeAnimal (tail animais) id
 
+adicionarAnimal :: [Animal] -> Animal -> [Animal]
+adicionarAnimal animais animal 
+	| existeAnimal animais (idAnimal animal) = animais
+	| otherwise =  animais ++ [animal]
 
--- função que exibe o Menu
-menu :: Animais -> IO Animais 
-menu dados = do
+editarTamanhoAnimal :: [Animal] -> Int -> String -> [Animal]
+editarTamanhoAnimal [animal] id tamanho
+	| idAnimal animal == id = [setTamanho animal tamanho]
+	| otherwise = [animal]
+editarTamanhoAnimal animais id tamanho
+	| idAnimal (head animais) == id = [setTamanho (head animais) tamanho] ++ (tail animais)
+	| otherwise = [head animais] ++ editarTamanhoAnimal (tail animais) id tamanho
 
-		putStrLn "-------------------------------- Controle de Animais --------------------------------"
-		putStrLn "Escolha uma opção "
-		putStrLn "1 - Cadastrar Animal"
-		putStrLn "2 - Atualizar Animal"
-		putStrLn "3 - Listar Animais" 
-		putStrLn "4 - Buscar" 
-		putStrLn "5 - Fechar programa" 
-		putStrLn "Digite sua opcao: "
+listarAnimais :: [Animal] -> String
+listarAnimais [] = "Nenhum animal cadastrado.\n"
+listarAnimais [animal] = (toString animal ++ "\n")
+listarAnimais animais = (toString (head animais) ++ "\n" ++ (listarAnimais (tail animais)))
 
-		putStr "Opção: "
-		op <- getChar
-		getChar -- descarta o Enter
-		executarOpcao  op
+buscarAnimal :: [Animal] -> Int -> String
+buscarAnimal [] _ = "Animal Inexistente.\n"
+buscarAnimal animais id
+	| (idAnimal (head animais) == id) = toString (head animais) ++ "\n"
+	| otherwise = buscarAnimal (tail animais) id
 
--- função para manipular a opção escolhida pelo usuário
+executarOpcao '1' animais = do
+	putStr "Digite o ID do animal: " 
+	id <- getLine
+	putStr "Digite o Tamanho do animal: " 
+	tam <- getLine
+	putStr "Digite o Genero do animal: " 
+	gen <- getLine
+	putStr "Digite a Cor do animal: " 
+	cor <- getLine
+	putStr "Digite o Tipo do animal: " 
+	tipo <- getLine
+	putStr "Digite o Dono do animal: " 
+	dono <- getLine
+	putStr "Digite a Obs do animal: " 
+	obs <- getLine
+	menu (adicionarAnimal animais (Animal (read id :: Int) tam gen cor tipo dono obs))
 
-executarOpcao ::  Char -> IO Animais 
-executarOpcao op '1' = cadastrarAnimal 
-executarOpcao op '2' = atualizarAnimal 
-executarOpcao op '3' = listarAnimais
-executarOpcao op '4' = buscar
-executarOpcao op '3' = fech-----------------------
-executarOpcao op _ = do
-				putStrLn ("\nOpção inválida!")
-			
-			
--- função que verifica se um animal existe (o id do animal é único)
-existe_animal :: Animais -> Id -> Bool
-existe_animal [] _ = False
-existe_animal ((Animal n p):xs) id
-			| (n == id) = True
-			| otherwise = existe_animal xs nome
+executarOpcao '2' animais = do
+	putStr "Digite o ID do animal: "
+	id <- getLine
+	putStr "Digite o novo Tamanho do animal: "
+	tam <- getLine
+	menu (editarTamanhoAnimal animais (read id :: Int) tam)
 
+executarOpcao '3' animais = do
+	putStr (listarAnimais animais)
+	menu animais
+	
+executarOpcao '4' animais = do
+	putStr "Digite o ID do animal: "
+	id <- getLine
+	putStr (buscarAnimal animais (read id :: Int))
+	menu animais
 
+executarOpcao _ animais = do
+	menu animais
 
--- função responsável pelo cadastro de animais
-cadastrarAnimal :: Animais -> IO Animais 
-cadastrarAnimal = do
-				id <- getInt "\nDigite id do animal: "
-				if (existeAnimal id) then do
-					putStrLn "\nEsse animal já existe"
-					getChar
-					menu dados
-				else do
-					
-					
-					tipo <- "\nDigite o tipo do animal: ";
-					tamanho << "Digite o tamanho do animal: "
-					genero<- "Digite o genero do animal: "
-					cor <- "Digite o cor do animal: "					
-					dono <- getString << "Digite o dono do animal: "
-			    	obs <- getString "Digite as observacoes do animal: "
-
-
-menu ((Jogador nome 0):dados) -- retorna a nova lista para o menu
+menu animais = do
+	putStrLn "-------------------------------- Controle de Animais --------------------------------"
+	putStrLn "Escolha uma opção "
+	putStrLn "1 - Cadastrar Animal"
+	putStrLn "2 - Atualizar Animal"
+	putStrLn "3 - Listar Animais"
+	putStrLn "4 - Buscar Animal"
+	putStrLn "Digite sua opcao: "
+	putStr "Opção: "
+	op <- getChar
+	putStrLn ""
+	executarOpcao op animais

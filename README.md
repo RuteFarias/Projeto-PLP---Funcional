@@ -10,6 +10,18 @@
   * Yally de Lima Galdino
   
   * Débora Ferreira de Barros
+  
+## Como Executar
+
+```
+ghci controle_animal.hs
+```
+
+E dentro do ghci utilizar
+
+```
+menu []
+```
 
 #######
 
