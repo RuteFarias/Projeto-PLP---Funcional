@@ -17,7 +17,7 @@ type Animais = [Animal]
 
 
 -- função que exibe o Menu
-menu :: Jogadores -> IO Jogadores
+menu :: Animais -> IO Animais 
 menu dados = do
 
 		putStrLn "-------------------------------- Controle de Animais --------------------------------"
