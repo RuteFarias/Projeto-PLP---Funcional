@@ -7,7 +7,7 @@ idAnimal (Animal id _ _ _ _ _ _) = id
 setTamanho (Animal id tam gen cor tipo dono obs) otherTam = Animal id otherTam gen cor tipo dono obs
 setObs (Animal id tam gen cor tipo dono obs) otherObs = Animal id tam gen cor tipo dono otherObs
 
-toString (Animal id tam gen cor tipo dono obs) = "Animal(" ++ "Id: " ++ show id ++ ", Tamanho: " ++ tam ++ ", Genero: " ++ gen ++ ", Cor: " ++ cor ++ ", Tipo: " ++ tipo ++ ", Dono: " ++ dono ++ ", Obs: " ++ obs ++ ")"
+toString (Animal id tam gen cor tipo dono obs) = "Animal(" ++ "Id: " ++ show id ++ ", Tamanho: " ++ tam ++ ", Gênero: " ++ gen ++ ", Cor: " ++ cor ++ ", Tipo: " ++ tipo ++ ", Dono: " ++ dono ++ ", Obs: " ++ obs ++ ")"
 
 existeAnimal :: [Animal] -> Int -> Bool
 existeAnimal [] _ = False
@@ -40,37 +40,46 @@ buscarAnimal animais id
 	| otherwise = buscarAnimal (tail animais) id
 
 executarOpcao '1' animais = do
+	putStrLn ""
 	putStr "Digite o ID do animal: " 
 	id <- getLine
-	putStr "Digite o Tamanho do animal: " 
+	putStr "Digite o tamanho do animal(em centímetros): " 
 	tam <- getLine
-	putStr "Digite o Genero do animal: " 
+	putStr "Digite o gênero do animal: " 
 	gen <- getLine
-	putStr "Digite a Cor do animal: " 
+	putStr "Digite a cor do animal: " 
 	cor <- getLine
-	putStr "Digite o Tipo do animal: " 
+	putStr "Digite o tipo do animal: " 
 	tipo <- getLine
-	putStr "Digite o Dono do animal: " 
+	putStr "Digite o dono do animal: " 
 	dono <- getLine
-	putStr "Digite a Obs do animal: " 
+	putStr "Digite a observação do animal: " 
 	obs <- getLine
+	putStrLn ""
 	menu (adicionarAnimal animais (Animal (read id :: Int) tam gen cor tipo dono obs))
 
 executarOpcao '2' animais = do
+	putStrLn ""
 	putStr "Digite o ID do animal: "
 	id <- getLine
-	putStr "Digite o novo Tamanho do animal: "
+	putStr "Digite o novo tamanho do animal: "
 	tam <- getLine
+	putStrLn ""
 	menu (editarTamanhoAnimal animais (read id :: Int) tam)
 
 executarOpcao '3' animais = do
+	putStrLn ""
 	putStr (listarAnimais animais)
+	putStrLn ""
 	menu animais
 	
 executarOpcao '4' animais = do
+	putStrLn ""
 	putStr "Digite o ID do animal: "
 	id <- getLine
+	putStrLn ""
 	putStr (buscarAnimal animais (read id :: Int))
+	putStrLn ""
 	menu animais
 
 executarOpcao _ animais = do
@@ -83,7 +92,8 @@ menu animais = do
 	putStrLn "2 - Atualizar Animal"
 	putStrLn "3 - Listar Animais"
 	putStrLn "4 - Buscar Animal"
-	putStrLn "Digite sua opcao: "
+	putStrLn ""
+	putStrLn "Digite sua opção: "
 	putStr "Opção: "
 	op <- getChar
 	putStrLn ""
