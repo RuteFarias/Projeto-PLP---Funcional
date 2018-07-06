@@ -1,18 +1,14 @@
 -- Animal (Id, Tamanho, Genero, Cor, Tipo, Dono, Obs) 
-data Animal = Animal Int String String String String String String
+data Animal = Animal Int String String String String String String 
 
 idAnimal :: Animal -> Int
-idAnimal (Animal id _ _ _ _ _ _) = id
+idAnimal (Animal id _ _ _ _ _ _ ) = id
 
--------------- Igual ao idAnimal 
-obsAnimal :: Animal -> String
-obsAnimal (Animal _ _ _ _ _ _ obs) = obs
+setTamanho (Animal id tam gen cor tipo dono obs ) otherTam = Animal id otherTam gen cor tipo dono obs
 
+setObs (Animal id tam gen cor tipo dono obs) otherObs = Animal id tam gen cor tipo dono otherObs 
 
-setTamanho (Animal id tam gen cor tipo dono obs) otherTam = Animal id otherTam gen cor tipo dono obs
-setObs (Animal id tam gen cor tipo dono obs) otherObs = Animal id tam gen cor tipo dono otherObs
-
-toString (Animal id tam gen cor tipo dono obs) = "Animal(" ++ "Id: " ++ show id ++ ", Tamanho: " ++ tam ++ ", Gênero: " ++ gen ++ ", Cor: " ++ cor ++ ", Tipo: " ++ tipo ++ ", Dono: " ++ dono ++ ", Obs: " ++ obs ++ ")"
+toString (Animal id tam gen cor tipo dono obs) = "Animal(" ++ "Id: " ++ show id ++ ", Tamanho: " ++ tam ++ ", Gênero: " ++ gen ++ ", Cor: " ++ cor ++ ", Tipo: " ++ tipo ++ ", Dono: " ++ dono ++ ", Obs: " ++ obs ++ ")" 
 
 existeAnimal :: [Animal] -> Int -> Bool
 existeAnimal [] _ = False
@@ -30,21 +26,29 @@ editarTamanhoAnimal [animal] id tamanho
 	| idAnimal animal == id = [setTamanho animal tamanho]
 	| otherwise = [animal]
 
----------
-{-editarObsAnimal :: [Animal] -> Int -> String -> [Animal]
-editarObsAnimal [animal] id tamanho
-	| idAnimal animal == id = [setObs animal observacao]
-	| otherwise = [animal]
--}
 
 editarTamanhoAnimal animais id tamanho
 	| idAnimal (head animais) == id = [setTamanho (head animais) tamanho] ++ (tail animais)
 	| otherwise = [head animais] ++ editarTamanhoAnimal (tail animais) id tamanho
 
+
+editarObsAnimal :: [Animal] -> Int -> String -> [Animal]
+editarObsAnimal [animal] id obs
+	| idAnimal animal == id = [setObs animal obs]
+	| otherwise = [animal]
+
+
+editarObsAnimal animais id obs
+	| idAnimal (head animais) == id = [setObs (head animais) obs] ++ (tail animais)
+	| otherwise = [head animais] ++ editarTamanhoAnimal (tail animais) id obs
+
+
+
 listarAnimais :: [Animal] -> String
 listarAnimais [] = "Nenhum animal cadastrado.\n"
 listarAnimais [animal] = (toString animal ++ "\n")
 listarAnimais animais = (toString (head animais) ++ "\n" ++ (listarAnimais (tail animais)))
+
 
 buscarAnimal :: [Animal] -> Int -> String
 buscarAnimal [] _ = "Animal inexistente.\n"
@@ -57,11 +61,23 @@ animalCadastrado existe
     | existe == True = "ID de animal já cadastrado, tente novamente.\n"
     | otherwise = "Animal cadastrado com sucesso.\n"
 
+atualizar '1' animais id = do 
+	putStr "Digite o novo tamanho do animal: "
+	tam <- getLine
+	putStrLn ""
+	menu (editarTamanhoAnimal animais (read id :: Int) tam)
+
+atualizar '2' animais id = do 
+	putStr "Digite o nova observacao do animal: "
+	obs <- getLine
+	putStrLn ""
+	menu (editarObsAnimal animais (read id :: Int) obs)
+
 executarOpcao '1' animais = do
     putStrLn ""
     putStr "Digite o ID do animal: " 
     id <- getLine
-    putStr "Digite o tamanho do animal(em centímetros): " 
+    putStr "Digite o tamanho do animal(P, M ou G): " 
     tam <- getLine
     putStr "Digite o gênero do animal: " 
     gen <- getLine
@@ -83,28 +99,12 @@ executarOpcao '2' animais = do
     id <- getLine
     putStrLn ""
     putStrLn "Escolha uma opção "
-    putStrLn "1 - Atualizar Obs"
-    putStrLn "2 - Atualizar tamanho"
- --   escolha <- getLine	
- --   atualizar escolha animais
-    
-{-   
-atualizar '1' animais = do 
-    putStr "Digite o nova obs do animal: "
-    obs <- getLine
+    putStrLn "1 - Atualizar tamanho"
+    putStrLn "2 - Atualizar Obs"
+    opc <- getChar
     putStrLn ""
-    putStr (buscarAnimal animais (read id :: Int))
-    menu (editarObsAnimal animais (read id :: Int) obs)
-
-atualizar '2' animais = do 
-    putStr "Digite o novo tamanho do animal: "
-    tam <- getLine
-    putStrLn ""
-    putStr (buscarAnimal animais (read id :: Int))
-    menu (editarTamanhoAnimal animais (read id :: Int) tam)
-  
--}
-
+    atualizar opc animais id
+	
 executarOpcao '3' animais = do
 	putStrLn ""
 	putStr (listarAnimais animais)
@@ -136,3 +136,6 @@ menu animais = do
 	op <- getChar
 	putStrLn ""
 	executarOpcao op animais
+
+iniciar = do
+	menu []
