@@ -71,7 +71,7 @@ atualizar '2' animais id = do
 	putStr "Digite o nova observacao do animal: "
 	obs <- getLine
 	putStrLn ""
-	menu (editarObsAnimal animais (read id :: Int) obs)
+    menu (editarObsAnimal animais (read id :: Int) obs)
 
 executarOpcao '1' animais = do
     putStrLn ""
@@ -92,7 +92,7 @@ executarOpcao '1' animais = do
     putStrLn ""   
     putStr (animalCadastrado (existeAnimal animais (read id :: Int)))
     menu (adicionarAnimal animais (Animal (read id :: Int) tam gen cor tipo dono obs))
------------ Se não der certo so apagar essas modificacoes(linhas 85,86,87) e deixar a linha 104
+    
 executarOpcao '2' animais = do
     putStrLn ""
     putStr "Digite o ID do animal: "

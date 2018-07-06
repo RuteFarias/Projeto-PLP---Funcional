@@ -20,7 +20,7 @@ ghci controle_animal.hs
 E dentro do ghci utilizar
 
 ```
-menu []
+iniciar
 ```
 
 #######
